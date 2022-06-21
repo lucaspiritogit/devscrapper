@@ -14,7 +14,7 @@ public class ScrapperEntity{
     private int id;
     private String jobTitle;
     private String url;
-    private String postedBy;
+    private String company;
     private String description;
     private String location;
     private DocumentEntity origin;
