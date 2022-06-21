@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 
+// static import of Helper class to conect to the HTML document with JSoup
 import static com.lpirito.devscrapper.helper.DocumentHelper.getDocument;
 
 
@@ -27,14 +28,16 @@ public class DevscrapperService {
 
         Document computrabajo = getDocument(computrabajoUrl);
         Document linkedin = getDocument(linkedinUrl);
-        DocumentEntity computrabajoOrigin = new DocumentEntity(0, "computrabajo", computrabajoUrl);
-        DocumentEntity linkedinOrigin = new DocumentEntity(1, "linkedin", linkedinUrl);
 
         Elements computrabajoTitles = computrabajo.select("a.js-o-link.fc_base");
         Elements linkedinTitles = linkedin.select("h3.base-search-card__title");
 
-
+        // storing all jobposts here for indexing and later feat
         ArrayList<ScrapperEntity> allJobPosts = new ArrayList<>();
+
+        // entities to send in the response and recognize which pages had the job postings
+        DocumentEntity computrabajoOrigin = new DocumentEntity(0, "computrabajo", computrabajoUrl);
+        DocumentEntity linkedinOrigin = new DocumentEntity(1, "linkedin", linkedinUrl);
         jobPosts(computrabajoTitles, computrabajoOrigin, allJobPosts);
         jobPosts(linkedinTitles, linkedinOrigin, allJobPosts);
         allPostsHandler(allJobPosts);
