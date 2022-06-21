@@ -32,14 +32,24 @@ public class DevscrapperService {
         Elements computrabajoTitles = computrabajo.select("a.js-o-link.fc_base");
         Elements linkedinTitles = linkedin.select("h3.base-search-card__title");
 
+        Elements links = computrabajo.select("#p_orders, article, div, h1, a.js-o-link.fc_base");
+
+
+        ArrayList<Element> jobTitles = new ArrayList<>();
+        jobTitles.addAll(computrabajoTitles);
+        jobTitles.addAll(linkedinTitles);
+
+
         // storing all jobposts here for indexing and later feat
         ArrayList<ScrapperEntity> allJobPosts = new ArrayList<>();
 
         // entities to send in the response and recognize which pages had the job postings
         DocumentEntity computrabajoOrigin = new DocumentEntity(0, "computrabajo", computrabajoUrl);
         DocumentEntity linkedinOrigin = new DocumentEntity(1, "linkedin", linkedinUrl);
-        jobPosts(computrabajoTitles, computrabajoOrigin, allJobPosts);
-        jobPosts(linkedinTitles, linkedinOrigin, allJobPosts);
+
+
+        jobPosts(computrabajoTitles, computrabajoOrigin, allJobPosts, links);
+        jobPosts(linkedinTitles, linkedinOrigin, allJobPosts, links);
         allPostsHandler(allJobPosts);
         return new ArrayList<>(allJobPosts);
     }
@@ -53,12 +63,17 @@ public class DevscrapperService {
     }
 
     // handles individual job postings
-    private void jobPosts(Elements titles, DocumentEntity document, ArrayList<ScrapperEntity> allJobPosts) {
-        for (Element unparsedTitles : titles) {
+    private void jobPosts(ArrayList<Element> jobTitles, DocumentEntity document, ArrayList<ScrapperEntity> allJobPosts, Elements links) {
+        for (Element jobTitle : jobTitles) {
             ScrapperEntity jobPost = new ScrapperEntity();
-            String parsedTitles = unparsedTitles.text();
+            String parsedTitles = jobTitle.text();
             jobPost.setOrigin(document);
             jobPost.setJobTitle(parsedTitles);
+            String hrefs = null;
+            for (Element link : links) {
+                hrefs = link.attr("href");
+            }
+            jobPost.setUrl(hrefs);
             allJobPosts.add(jobPost);
         }
     }
