@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static com.lpirito.devscrapper.helper.DocumentHelper.getDocument;
 
@@ -36,21 +35,22 @@ public class DevscrapperService {
 
 
         ArrayList<ScrapperEntity> allJobPosts = new ArrayList<>();
-        sourceOfJobPosts(computrabajoTitles, computrabajoOrigin, allJobPosts);
-        sourceOfJobPosts(linkedinTitles, linkedinOrigin, allJobPosts);
+        jobPosts(computrabajoTitles, computrabajoOrigin, allJobPosts);
+        jobPosts(linkedinTitles, linkedinOrigin, allJobPosts);
         allPostsHandler(allJobPosts);
         return new ArrayList<>(allJobPosts);
     }
 
+    // handles all the posts, mainly for indexing
     private void allPostsHandler(ArrayList<ScrapperEntity> allJobPosts) {
         int index = 0;
         for (ScrapperEntity jobPost : allJobPosts) {
             jobPost.setId(index++);
-            jobPost.setDescription("Asdf");
         }
     }
 
-    private void sourceOfJobPosts(Elements titles, DocumentEntity document, ArrayList<ScrapperEntity> allJobPosts) {
+    // handles individual job postings
+    private void jobPosts(Elements titles, DocumentEntity document, ArrayList<ScrapperEntity> allJobPosts) {
         for (Element unparsedTitles : titles) {
             ScrapperEntity jobPost = new ScrapperEntity();
             String parsedTitles = unparsedTitles.text();
