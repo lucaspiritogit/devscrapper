@@ -32,49 +32,46 @@ public class DevscrapperService {
         Elements computrabajoTitles = computrabajo.select("a.js-o-link.fc_base");
         Elements linkedinTitles = linkedin.select("h3.base-search-card__title");
 
-        Elements links = computrabajo.select("#p_orders, article, div, h1, a.js-o-link.fc_base");
+        Elements computrabajoJobsHref = computrabajo.select("a.js-o-link.fc_base[href]");
+        Elements linkedinJobsHref = linkedinTitles;
 
-
-        ArrayList<Element> jobTitles = new ArrayList<>();
-        jobTitles.addAll(computrabajoTitles);
-        jobTitles.addAll(linkedinTitles);
-
-
-        // storing all jobposts here for indexing and later feat
-        ArrayList<ScrapperEntity> allJobPosts = new ArrayList<>();
 
         // entities to send in the response and recognize which pages had the job postings
         DocumentEntity computrabajoOrigin = new DocumentEntity(0, "computrabajo", computrabajoUrl);
         DocumentEntity linkedinOrigin = new DocumentEntity(1, "linkedin", linkedinUrl);
 
 
-        jobPosts(computrabajoTitles, computrabajoOrigin, allJobPosts, links);
-        jobPosts(linkedinTitles, linkedinOrigin, allJobPosts, links);
-        allPostsHandler(allJobPosts);
-        return new ArrayList<>(allJobPosts);
+        ArrayList<ScrapperEntity> response = new ArrayList<>();
+        jobPosts(computrabajoTitles, computrabajoOrigin, response, computrabajoJobsHref);
+        jobPosts(linkedinTitles, linkedinOrigin, response, linkedinJobsHref);
+        responseHandler(response);
+        return response;
     }
 
     // handles all the posts, mainly for indexing
-    private void allPostsHandler(ArrayList<ScrapperEntity> allJobPosts) {
+    private void responseHandler(ArrayList<ScrapperEntity> response) {
         int index = 0;
-        for (ScrapperEntity jobPost : allJobPosts) {
+        for (ScrapperEntity jobPost : response) {
             jobPost.setId(index++);
         }
     }
 
     // handles individual job postings
-    private void jobPosts(ArrayList<Element> jobTitles, DocumentEntity document, ArrayList<ScrapperEntity> allJobPosts, Elements links) {
+    private void jobPosts(ArrayList<Element> jobTitles, DocumentEntity document, ArrayList<ScrapperEntity> response, Elements links) {
         for (Element jobTitle : jobTitles) {
             ScrapperEntity jobPost = new ScrapperEntity();
-            String parsedTitles = jobTitle.text();
             jobPost.setOrigin(document);
-            jobPost.setJobTitle(parsedTitles);
+            jobPost.setJobTitle(jobTitle.text());
             String hrefs = null;
             for (Element link : links) {
-                hrefs = link.attr("href");
+                hrefs = "https://www.computrabajo.com.ar".concat(link.attr("href"));
+                jobPost.setUrl(hrefs);
+                boolean isFromComputrabajo = jobPost.getOrigin().getSource().equals("computrabajo");
+                if (!isFromComputrabajo) {
+                    jobPost.setUrl("not found");
+                }
             }
-            jobPost.setUrl(hrefs);
-            allJobPosts.add(jobPost);
+            response.add(jobPost);
         }
     }
 
