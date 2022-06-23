@@ -31,16 +31,16 @@ public class DevscrapperService {
         ArrayList<ScrapperEntity> response = new ArrayList<>();
         response.addAll(computrabajoPosts());
         response.addAll(linkedinPosts());
-
-
-
-
-
-
-
-
+        responseHandler(response);
 
         return response;
+    }
+
+    private void responseHandler(ArrayList<ScrapperEntity> response) {
+        int index = 0;
+        for (ScrapperEntity jobPostEntity : response) {
+            jobPostEntity.setId(index++);
+        }
     }
 
 
@@ -56,11 +56,12 @@ public class DevscrapperService {
         for (Element computrabajoTitle : computrabajoTitles) {
             ComputrabajoEntity computrabajoEntity = new ComputrabajoEntity();
             computrabajoEntity.setJobTitle(computrabajoTitle.text());
-            computrabajoEntity.setUrl(computrabajoJobsHref.attr("href"));
             computrabajoEntity.setOrigin(computrabajoOrigin);
+            computrabajoEntity.setUrl("https://www.computrabajo.com.ar".concat(computrabajoJobsHref.attr("href")));
 
             computrabajoEntityArray.add(computrabajoEntity);
         }
+
         return computrabajoEntityArray;
     }
 
@@ -77,8 +78,8 @@ public class DevscrapperService {
         for (Element linkedinTitle : linkedinTitles) {
             LinkedinEntity linkedinEntity = new LinkedinEntity();
             linkedinEntity.setJobTitle(linkedinTitle.text());
-            linkedinEntity.setUrl(linkedinJobsHrefs);
             linkedinEntity.setOrigin(linkedinOrigin);
+            linkedinEntity.setUrl(linkedinJobsHrefs);
 
             linkedinEntityArray.add(linkedinEntity);
         }
