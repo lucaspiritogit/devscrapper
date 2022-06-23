@@ -1,6 +1,8 @@
 package com.lpirito.devscrapper.service;
 
+import com.lpirito.devscrapper.entity.ComputrabajoEntity;
 import com.lpirito.devscrapper.entity.DocumentEntity;
+import com.lpirito.devscrapper.entity.LinkedinEntity;
 import com.lpirito.devscrapper.entity.ScrapperEntity;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,53 +28,61 @@ public class DevscrapperService {
 
     public ArrayList<ScrapperEntity> getJobList() throws IOException {
 
-        Document computrabajo = getDocument(computrabajoUrl);
-        Document linkedin = getDocument(linkedinUrl);
-
-        Elements computrabajoTitles = computrabajo.select("a.js-o-link.fc_base");
-        Elements linkedinTitles = linkedin.select("h3.base-search-card__title");
-
-        Elements computrabajoJobsHref = computrabajo.select("a.js-o-link.fc_base[href]");
-        Elements linkedinJobsHref = linkedinTitles;
-
-
-        // entities to send in the response and recognize which pages had the job postings
-        DocumentEntity computrabajoOrigin = new DocumentEntity(0, "computrabajo", computrabajoUrl);
-        DocumentEntity linkedinOrigin = new DocumentEntity(1, "linkedin", linkedinUrl);
-
-
         ArrayList<ScrapperEntity> response = new ArrayList<>();
-        jobPosts(computrabajoTitles, computrabajoOrigin, response, computrabajoJobsHref);
-        jobPosts(linkedinTitles, linkedinOrigin, response, linkedinJobsHref);
-        responseHandler(response);
+        response.addAll(computrabajoPosts());
+        response.addAll(linkedinPosts());
+
+
+
+
+
+
+
+
+
         return response;
     }
 
-    // handles all the posts, mainly for indexing
-    private void responseHandler(ArrayList<ScrapperEntity> response) {
-        int index = 0;
-        for (ScrapperEntity jobPost : response) {
-            jobPost.setId(index++);
+
+    // handles individual job postings of computrabajo
+    private ArrayList<ComputrabajoEntity> computrabajoPosts() throws IOException {
+        ArrayList<ComputrabajoEntity> computrabajoEntityArray = new ArrayList<>();
+
+        Document computrabajo = getDocument(computrabajoUrl);
+        DocumentEntity computrabajoOrigin = new DocumentEntity(0, "computrabajo", computrabajoUrl);
+        Elements computrabajoTitles = computrabajo.select("a.js-o-link.fc_base");
+        Elements computrabajoJobsHref = computrabajo.select("a.js-o-link.fc_base[href]");
+
+        for (Element computrabajoTitle : computrabajoTitles) {
+            ComputrabajoEntity computrabajoEntity = new ComputrabajoEntity();
+            computrabajoEntity.setJobTitle(computrabajoTitle.text());
+            computrabajoEntity.setUrl(computrabajoJobsHref.attr("href"));
+            computrabajoEntity.setOrigin(computrabajoOrigin);
+
+            computrabajoEntityArray.add(computrabajoEntity);
         }
+        return computrabajoEntityArray;
     }
 
-    // handles individual job postings
-    private void jobPosts(ArrayList<Element> jobTitles, DocumentEntity document, ArrayList<ScrapperEntity> response, Elements links) {
-        for (Element jobTitle : jobTitles) {
-            ScrapperEntity jobPost = new ScrapperEntity();
-            jobPost.setOrigin(document);
-            jobPost.setJobTitle(jobTitle.text());
-            String hrefs = null;
-            for (Element link : links) {
-                hrefs = "https://www.computrabajo.com.ar".concat(link.attr("href"));
-                jobPost.setUrl(hrefs);
-                boolean isFromComputrabajo = jobPost.getOrigin().getSource().equals("computrabajo");
-                if (!isFromComputrabajo) {
-                    jobPost.setUrl("not found");
-                }
-            }
-            response.add(jobPost);
+    // handles individual job postings of linkedin
+    private ArrayList<LinkedinEntity> linkedinPosts() throws IOException {
+        ArrayList<LinkedinEntity> linkedinEntityArray = new ArrayList<>();
+
+        Document linkedin = getDocument(linkedinUrl);
+        DocumentEntity linkedinOrigin = new DocumentEntity(1, "linkedin", linkedinUrl);
+        Elements linkedinTitles = linkedin.select("h3.base-search-card__title");
+        //TODO
+        String linkedinJobsHrefs = "asd";
+;
+        for (Element linkedinTitle : linkedinTitles) {
+            LinkedinEntity linkedinEntity = new LinkedinEntity();
+            linkedinEntity.setJobTitle(linkedinTitle.text());
+            linkedinEntity.setUrl(linkedinJobsHrefs);
+            linkedinEntity.setOrigin(linkedinOrigin);
+
+            linkedinEntityArray.add(linkedinEntity);
         }
+        return linkedinEntityArray;
     }
 
 }
