@@ -7,16 +7,14 @@ import com.lpirito.devscrapper.entity.ScrapperEntity;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
-// static import of Helper class to conect to the HTML document with JSoup
+// static import of Helper class to connect to the HTML document with JSoup
 import static com.lpirito.devscrapper.helper.DocumentHelper.getDocument;
-
 
 @Service
 public class DevscrapperService {
@@ -29,21 +27,21 @@ public class DevscrapperService {
         ArrayList<ScrapperEntity> response = new ArrayList<>();
         response.addAll(computrabajoPosts());
         response.addAll(linkedinPosts());
-        responseHandler(response);
+        responseIndexer(response);
 
+        Collections.shuffle(response);
         return response;
     }
 
-    private void responseHandler(ArrayList<ScrapperEntity> response) {
+    private void responseIndexer(ArrayList<ScrapperEntity> response) {
         int index = 0;
         for (ScrapperEntity jobPostEntity : response) {
             jobPostEntity.setId(index++);
         }
     }
 
-
     // handles individual job postings of computrabajo
-    private ArrayList<ComputrabajoEntity> computrabajoPosts() throws IOException {
+    public ArrayList<ComputrabajoEntity> computrabajoPosts() throws IOException {
         ArrayList<ComputrabajoEntity> computrabajoEntityArray = new ArrayList<>();
 
         Document computrabajo = getDocument(computrabajoUrl);
@@ -57,7 +55,6 @@ public class DevscrapperService {
             computrabajoEntity.setUrl(url);
             computrabajoEntity.setOrigin(computrabajoOrigin);
 
-
             computrabajoEntityArray.add(computrabajoEntity);
         }
 
@@ -65,7 +62,7 @@ public class DevscrapperService {
     }
 
     // handles individual job postings of linkedin
-    private ArrayList<LinkedinEntity> linkedinPosts() throws IOException {
+    public ArrayList<LinkedinEntity> linkedinPosts() throws IOException {
         ArrayList<LinkedinEntity> linkedinEntityArray = new ArrayList<>();
 
         Document linkedin = getDocument(linkedinUrl);

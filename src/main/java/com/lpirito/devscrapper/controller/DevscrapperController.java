@@ -1,5 +1,7 @@
 package com.lpirito.devscrapper.controller;
 
+import com.lpirito.devscrapper.entity.ComputrabajoEntity;
+import com.lpirito.devscrapper.entity.LinkedinEntity;
 import com.lpirito.devscrapper.entity.ScrapperEntity;
 import com.lpirito.devscrapper.service.DevscrapperService;
 import org.slf4j.Logger;
@@ -16,13 +18,21 @@ import java.util.ArrayList;
 @RequestMapping("/")
 public class DevscrapperController {
 
-    Logger logger = LoggerFactory.getLogger(DevscrapperController.class);
-
     @Autowired
     DevscrapperService service;
 
     @GetMapping(value = "/jobs/arg", produces = "application/json")
-    public ArrayList<ScrapperEntity> listOfJobs() throws IOException {
+    public ArrayList<ScrapperEntity> getJobList() throws IOException {
         return service.getJobList();
+    }
+
+    @GetMapping(value = "/jobs/arg/computrabajo", produces = "application/json")
+    public ArrayList<ComputrabajoEntity> getComputrabajoJobList() throws IOException {
+        return service.computrabajoPosts();
+    }
+
+    @GetMapping(value = "/jobs/arg/linkedin", produces = "application/json")
+    public ArrayList<LinkedinEntity> getLinkedinJobList() throws IOException {
+        return service.linkedinPosts();
     }
 }
