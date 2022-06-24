@@ -20,11 +20,9 @@ import static com.lpirito.devscrapper.helper.DocumentHelper.getDocument;
 
 @Service
 public class DevscrapperService {
-    Logger logger = LoggerFactory.getLogger(DevscrapperService.class);
 
     static final String computrabajoUrl = "https://www.computrabajo.com.ar/trabajo-de-desarrollador";
     static final String linkedinUrl = "https://www.linkedin.com/jobs/search/?keywords=desarrollador&location=Argentina";
-
 
     public ArrayList<ScrapperEntity> getJobList() throws IOException {
 
@@ -51,14 +49,12 @@ public class DevscrapperService {
         Document computrabajo = getDocument(computrabajoUrl);
         DocumentEntity computrabajoOrigin = new DocumentEntity(0, "computrabajo", computrabajoUrl);
         Elements computrabajoTitles = computrabajo.select("a.js-o-link.fc_base");
-        Elements computrabajoJobsHref = computrabajo.select("a.js-o-link.fc_base[href]");
 
         for (Element computrabajoTitle : computrabajoTitles) {
             ComputrabajoEntity computrabajoEntity = new ComputrabajoEntity();
             computrabajoEntity.setJobTitle(computrabajoTitle.text());
             computrabajoEntity.setOrigin(computrabajoOrigin);
-            computrabajoEntity.setUrl("https://www.computrabajo.com.ar".concat(computrabajoJobsHref.attr("href")));
-
+            computrabajoEntity.setUrl("https://www.computrabajo.com.ar".concat(computrabajoTitle.attr("href")));
             computrabajoEntityArray.add(computrabajoEntity);
         }
 
