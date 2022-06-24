@@ -21,7 +21,7 @@ public class DevscrapperController {
     @Autowired
     DevscrapperService service;
 
-    @GetMapping(value = "/jobs", produces = "application/json")
+    @GetMapping(value = "/jobs/arg", produces = "application/json")
     public ArrayList<ScrapperEntity> listOfJobs() throws IOException {
         return service.getJobList();
     }
