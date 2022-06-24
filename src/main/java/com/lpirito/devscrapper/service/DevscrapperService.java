@@ -53,8 +53,11 @@ public class DevscrapperService {
         for (Element computrabajoTitle : computrabajoTitles) {
             ComputrabajoEntity computrabajoEntity = new ComputrabajoEntity();
             computrabajoEntity.setJobTitle(computrabajoTitle.text());
+            String url = "https://www.computrabajo.com.ar".concat(computrabajoTitle.attr("href"));
+            computrabajoEntity.setUrl(url);
             computrabajoEntity.setOrigin(computrabajoOrigin);
-            computrabajoEntity.setUrl("https://www.computrabajo.com.ar".concat(computrabajoTitle.attr("href")));
+
+
             computrabajoEntityArray.add(computrabajoEntity);
         }
 
@@ -67,15 +70,13 @@ public class DevscrapperService {
 
         Document linkedin = getDocument(linkedinUrl);
         DocumentEntity linkedinOrigin = new DocumentEntity(1, "linkedin", linkedinUrl);
-        Elements linkedinTitles = linkedin.select("h3.base-search-card__title");
-        //TODO
-        String linkedinJobsHrefs = "asd";
-;
+        Elements linkedinTitles = linkedin.select("a.base-card__full-link.absolute");
+
         for (Element linkedinTitle : linkedinTitles) {
             LinkedinEntity linkedinEntity = new LinkedinEntity();
             linkedinEntity.setJobTitle(linkedinTitle.text());
             linkedinEntity.setOrigin(linkedinOrigin);
-            linkedinEntity.setUrl(linkedinJobsHrefs);
+            linkedinEntity.setUrl(linkedinTitle.attr("href"));
 
             linkedinEntityArray.add(linkedinEntity);
         }
