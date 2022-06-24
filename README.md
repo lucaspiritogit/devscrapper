@@ -1,16 +1,15 @@
 # Devscrapper
-Scrapping API that looks for recent developer Jobs in Argentina
-
-This API only works for Argentina and these 2 websites (for the moment)
+API que scrappea trabajos de desarrollador entre los siguientes portales de busqueda laboral:
 - Computrabajo
-- Linkedin
+- ~~Linkedin~~ WIP
+- Despues voy metiendo mas 👻
 
 ## Endpoints
-/jobs -> Lists jobs from both websites
+/jobs/arg -> Todas las publicaciones de todos los portales de trabajo en Argentina 🌞
 
 ## TODOS
 - Refactor 💀
-- Figure out pagination to enable more results
-- Add more pages
-- Enable dynamic localization 
-- Complete the null fields with actual info
+- Ordenar de manera random los jobs post
+- No tengo ni idea de como se usa la paginacion asi que si lo aprendo lo aplico
+- Agregar mas regiones 
+- Completar los campos que vienen null
