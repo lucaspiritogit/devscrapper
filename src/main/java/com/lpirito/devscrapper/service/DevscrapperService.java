@@ -43,9 +43,9 @@ public class DevscrapperService {
     public ArrayList<ComputrabajoEntity> computrabajoPosts() {
         ArrayList<ComputrabajoEntity> computrabajoJobPostsArray = new ArrayList<>();
         int numOfPages = 0;
-        while (numOfPages < 5) {
-            numOfPages++;
+        while (numOfPages <= 5) {
             computrabajoUrl = "https://www.computrabajo.com.ar/trabajo-de-desarrollador?p=" + numOfPages;
+            numOfPages++;
             Element computrabajoHtmlDocument = getDocument(computrabajoUrl);
             Elements computrabajoJobPostsTitles = computrabajoHtmlDocument.select("a.js-o-link.fc_base");
             // where the job post came from
