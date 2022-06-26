@@ -13,14 +13,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-// static import of Helper class to connect to the HTML document with JSoup
 import static com.lpirito.devscrapper.helper.DocumentHelper.getDocument;
 
 @Service
 public class DevscrapperService {
 
-    static final String computrabajoUrl = "https://www.computrabajo.com.ar/trabajo-de-desarrollador";
-    static final String linkedinUrl = "https://www.linkedin.com/jobs/search/?keywords=desarrollador&location=Argentina";
+    static String computrabajoUrl = "https://www.computrabajo.com.ar/trabajo-de-desarrollador?p=";
+    static String linkedinUrl = "https://www.linkedin.com/jobs/search/?keywords=desarrollador&location=Argentina";
 
     public ArrayList<ScrapperEntity> getJobList() throws IOException {
 
@@ -42,23 +41,26 @@ public class DevscrapperService {
 
     // handles individual job postings of computrabajo
     public ArrayList<ComputrabajoEntity> computrabajoPosts() throws IOException {
-        ArrayList<ComputrabajoEntity> computrabajoEntityArray = new ArrayList<>();
+        ArrayList<ComputrabajoEntity> computrabajoJobPostsArray = new ArrayList<>();
+        int numOfPages = 1;
+        while (numOfPages < 10) {
+            numOfPages++;
+            computrabajoUrl = "https://www.computrabajo.com.ar/trabajo-de-desarrollador?p=" + numOfPages;
+            Element computrabajoHtmlDocument = getDocument(computrabajoUrl);
+            Elements computrabajoJobPostsTitles = computrabajoHtmlDocument.select("a.js-o-link.fc_base");
+            // where the job post came from
+            DocumentEntity computrabajoOrigin = new DocumentEntity(0, "computrabajoHtmlDocument", computrabajoUrl);
 
-        Document computrabajo = getDocument(computrabajoUrl);
-        DocumentEntity computrabajoOrigin = new DocumentEntity(0, "computrabajo", computrabajoUrl);
-        Elements computrabajoTitles = computrabajo.select("a.js-o-link.fc_base");
-
-        for (Element computrabajoTitle : computrabajoTitles) {
-            ComputrabajoEntity computrabajoEntity = new ComputrabajoEntity();
-            computrabajoEntity.setJobTitle(computrabajoTitle.text());
-            String url = "https://www.computrabajo.com.ar".concat(computrabajoTitle.attr("href"));
-            computrabajoEntity.setUrl(url);
-            computrabajoEntity.setOrigin(computrabajoOrigin);
-
-            computrabajoEntityArray.add(computrabajoEntity);
+            for (Element computrabajoTitle : computrabajoJobPostsTitles) {
+                ComputrabajoEntity computrabajoJobPost = new ComputrabajoEntity();
+                computrabajoJobPost.setJobTitle(computrabajoTitle.text());
+                String url = "https://www.computrabajo.com.ar".concat(computrabajoTitle.attr("href"));
+                computrabajoJobPost.setUrl(url);
+                computrabajoJobPost.setOrigin(computrabajoOrigin);
+                computrabajoJobPostsArray.add(computrabajoJobPost);
+            }
         }
-
-        return computrabajoEntityArray;
+        return computrabajoJobPostsArray;
     }
 
     // handles individual job postings of linkedin
