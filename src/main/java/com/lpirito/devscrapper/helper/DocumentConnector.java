@@ -6,7 +6,7 @@ import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 
-public class DocumentHelper {
+public class DocumentConnector {
 
     public static Document getDocument(String url) {
         Connection conn = Jsoup.connect(url);
