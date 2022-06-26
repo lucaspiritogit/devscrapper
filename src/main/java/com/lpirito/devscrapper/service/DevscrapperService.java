@@ -21,7 +21,7 @@ public class DevscrapperService {
     static String computrabajoUrl = "https://www.computrabajo.com.ar/trabajo-de-desarrollador?p=";
     static String linkedinUrl = "https://www.linkedin.com/jobs/search/?keywords=desarrollador&location=Argentina";
 
-    public ArrayList<ScrapperEntity> getJobList() throws IOException {
+    public ArrayList<ScrapperEntity> getJobList() {
 
         ArrayList<ScrapperEntity> response = new ArrayList<>();
         response.addAll(computrabajoPosts());
@@ -40,21 +40,22 @@ public class DevscrapperService {
     }
 
     // handles individual job postings of computrabajo
-    public ArrayList<ComputrabajoEntity> computrabajoPosts() throws IOException {
+    public ArrayList<ComputrabajoEntity> computrabajoPosts() {
         ArrayList<ComputrabajoEntity> computrabajoJobPostsArray = new ArrayList<>();
-        int numOfPages = 1;
-        while (numOfPages < 10) {
+        int numOfPages = 0;
+        while (numOfPages < 5) {
             numOfPages++;
             computrabajoUrl = "https://www.computrabajo.com.ar/trabajo-de-desarrollador?p=" + numOfPages;
             Element computrabajoHtmlDocument = getDocument(computrabajoUrl);
             Elements computrabajoJobPostsTitles = computrabajoHtmlDocument.select("a.js-o-link.fc_base");
             // where the job post came from
-            DocumentEntity computrabajoOrigin = new DocumentEntity(0, "computrabajoHtmlDocument", computrabajoUrl);
+            DocumentEntity computrabajoOrigin = new DocumentEntity(0, "computrabajo", computrabajoUrl);
 
             for (Element computrabajoTitle : computrabajoJobPostsTitles) {
                 ComputrabajoEntity computrabajoJobPost = new ComputrabajoEntity();
                 computrabajoJobPost.setJobTitle(computrabajoTitle.text());
-                String url = "https://www.computrabajo.com.ar".concat(computrabajoTitle.attr("href"));
+                String linkToJobPost = computrabajoTitle.attr("href");
+                String url = "https://www.computrabajo.com.ar".concat(linkToJobPost);
                 computrabajoJobPost.setUrl(url);
                 computrabajoJobPost.setOrigin(computrabajoOrigin);
                 computrabajoJobPostsArray.add(computrabajoJobPost);
@@ -64,7 +65,7 @@ public class DevscrapperService {
     }
 
     // handles individual job postings of linkedin
-    public ArrayList<LinkedinEntity> linkedinPosts() throws IOException {
+    public ArrayList<LinkedinEntity> linkedinPosts() {
         ArrayList<LinkedinEntity> linkedinEntityArray = new ArrayList<>();
 
         Document linkedin = getDocument(linkedinUrl);
