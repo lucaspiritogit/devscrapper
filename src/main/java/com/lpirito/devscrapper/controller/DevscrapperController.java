@@ -5,6 +5,8 @@ import com.lpirito.devscrapper.entity.LinkedinEntity;
 import com.lpirito.devscrapper.entity.JobPostEntity;
 import com.lpirito.devscrapper.service.DevscrapperService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,9 +21,10 @@ public class DevscrapperController {
     @Autowired
     DevscrapperService service;
 
+
     @GetMapping(value = "/jobs/arg", produces = "application/json")
-    public ArrayList<JobPostEntity> getJobList() throws IOException {
-        return service.getJobList();
+    public ResponseEntity<ArrayList<JobPostEntity>> getJobList() throws IOException {
+        return new ResponseEntity<>(service.getJobList(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/jobs/arg/computrabajo", produces = "application/json")
@@ -30,7 +33,7 @@ public class DevscrapperController {
     }
 
     @GetMapping(value = "/jobs/arg/linkedin", produces = "application/json")
-    public ArrayList<LinkedinEntity> getLinkedinJobList() throws IOException {
-        return service.linkedinPosts();
+    public ResponseEntity<ArrayList<LinkedinEntity>> getLinkedinJobList() throws IOException {
+        return new ResponseEntity<>(service.linkedinPosts(), HttpStatus.OK);
     }
 }

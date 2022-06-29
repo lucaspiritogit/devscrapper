@@ -8,15 +8,8 @@ import java.io.IOException;
 
 public class DocumentConnector {
 
-    public static Document getDocument(String url) {
+    public static Document getDocument(String url) throws IOException {
         Connection conn = Jsoup.connect(url);
-        Document doc = null;
-        try {
-            doc = conn.get();
-        } catch (IOException e) {
-            e.printStackTrace();
-            // handle error
-        }
-        return doc;
+        return conn.get();
     }
 }

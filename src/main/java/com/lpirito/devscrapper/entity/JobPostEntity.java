@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.stereotype.Component;
 
 
+
 @Getter
 @Setter
 @ToString
@@ -12,7 +13,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class JobPostEntity {
 
-    private int id;
+    private static final long serialVersionUID = 1L;
+
+    private Integer id;
     private String jobTitle;
     private String url;
     private String company;
