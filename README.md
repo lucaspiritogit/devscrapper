@@ -9,8 +9,4 @@ API que scrappea trabajos de desarrollador entre los siguientes portales de busq
 - /jobs/arg/computrabajo
 - /jobs/arg/linkedin
 
-## TODOS
-- Refactor 💀
-- No tengo ni idea de como se usa la paginacion asi que si lo aprendo lo aplico
-- Agregar mas regiones 
-- Completar los campos que vienen null
+LINKEDIN BLOQUEA INCOMING REQUESTS SI TIRAS MUCHAS REQUESTS NOOOOOOOOOOOOOOOOOOO
